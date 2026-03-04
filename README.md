@@ -27,8 +27,8 @@ AI-Docs is an advanced AI-powered chatbot that uses **Retrieval-Augmented Genera
 ### Clone the Repository
 
 ```sh
-git clone https://github.com/erenisci/rag-implementation
-cd rag-implementation
+git clone https://github.com/erenisci/ai-docs
+cd ai-docs
 ```
 
 ### Backend Setup
@@ -96,8 +96,8 @@ docker-compose -f docker-compose.build.yml up --build -d
 #### a. Pull from Docker Hub
 
 ```sh
-docker pull erenisci/rag-implementation:backend
-docker pull erenisci/rag-implementation:frontend
+docker pull erenisci/ai-docs:backend
+docker pull erenisci/ai-docs:frontend
 ```
 
 #### b. Run Using Docker Compose (Recommended)
@@ -109,8 +109,8 @@ docker-compose -f docker-compose.image.yml up -d
 #### Alternatively: Run Containers Manually
 
 ```sh
-docker run -d -p 8000:8000 erenisci/rag-implementation:backend
-docker run -d -p 5173:3000 erenisci/rag-implementation:frontend
+docker run -d -p 8000:8000 erenisci/ai-docs:backend
+docker run -d -p 5173:3000 erenisci/ai-docs:frontend
 ```
 
 ---
