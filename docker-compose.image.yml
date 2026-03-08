@@ -1,12 +1,12 @@
 services:
   backend:
-    image: erenisci/rag-implementation:backend
+    image: erenisci/ai-docs:backend
     ports:
       - '8000:8000'
     restart: unless-stopped
 
   frontend:
-    image: erenisci/rag-implementation:frontend
+    image: erenisci/ai-docs:frontend
     ports:
       - '5173:3000'
     depends_on:
