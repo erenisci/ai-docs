@@ -8,6 +8,7 @@ AI-Docs is an advanced AI-powered chatbot that uses **Retrieval-Augmented Genera
 - **PDF Processing**: Extracts and indexes data from uploaded PDF files.
 - **Real-time message storage**: Saves chat history using SQLite.
 - **RAG-based answering**: Uses ChromaDB and embedding models for accurate, document-grounded responses.
+- **Multi-document retrieval**: Queries across multiple PDFs simultaneously using MMR search.
 - **Dynamic chat list**: Automatically updates the sidebar with active chats.
 - **Chat title editing**: Rename conversations directly from the sidebar.
 - **Delete chat support**: Deletes conversations dynamically.
@@ -21,6 +22,35 @@ AI-Docs is an advanced AI-powered chatbot that uses **Retrieval-Augmented Genera
 - **Frontend**: React 19 (Vite), TypeScript, TailwindCSS
 - **Backend**: FastAPI, SQLite, ChromaDB, LangChain
 - **AI Model**: Anthropic Claude (Haiku / Sonnet / Opus, configurable via settings)
+- **Embeddings**: ChromaDB `DefaultEmbeddingFunction` (local, sentence-transformers — no API key required)
+
+---
+
+## How It Works
+
+```
+User Question
+     │
+     ▼
+LangChain RAG Chain
+     │
+     ├─► ChromaDB (MMR Retrieval)
+     │        └─ Searches across all indexed PDF chunks
+     │
+     ├─► Retrieved Context (top-k relevant chunks)
+     │
+     └─► Anthropic Claude (claude-opus-4-6 / sonnet / haiku)
+              └─ Generates grounded answer from context
+                       │
+                       ▼
+               Answer + Chat History (SQLite)
+```
+
+1. PDFs are uploaded and chunked via `pdfplumber` + `RecursiveCharacterTextSplitter`
+2. Chunks are embedded locally and stored in **ChromaDB** (persistent vector database)
+3. On each query, **MMR (Maximal Marginal Relevance)** retrieval fetches the most relevant and diverse chunks
+4. **LangChain** passes the retrieved context + conversation history to **Claude**
+5. Claude generates a document-grounded answer — no hallucination from outside the provided PDFs
 
 ---
 
@@ -34,8 +64,8 @@ ai-docs/
 │   │   ├── chat_manager.py   # Chat history management
 │   │   ├── embedding.py      # ChromaDB embedding storage
 │   │   ├── file_manager.py   # PDF upload/delete operations
-│   │   ├── preprocessing.py  # PDF text extraction
-│   │   ├── retrieval.py      # LangChain RAG chain
+│   │   ├── preprocessing.py  # PDF text extraction & chunking
+│   │   ├── retrieval.py      # LangChain RAG chain + Claude integration
 │   │   └── settings.py       # Runtime settings management
 │   ├── Dockerfile
 │   └── requirements.txt
@@ -75,6 +105,12 @@ source venv/bin/activate  # MacOS/Linux
 venv\Scripts\activate    # Windows
 
 pip install -r requirements.txt
+```
+
+Create a `.env` file in the `backend` directory:
+
+```sh
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```
 
 ### Frontend Setup
@@ -168,12 +204,12 @@ docker run -d -p 5173:3000 erenisci/ai-docs:frontend
 ## Usage Guide
 
 1. **Start a new chat** by clicking "New Chat".
-2. **Ask questions** in the message box.
-3. **Upload PDFs** via the PDF manager to provide document-based answers.
-4. **Process PDFs** to index them into ChromaDB for RAG retrieval.
-5. **Review past conversations** in the sidebar.
-6. **Rename or delete chats** as needed.
-7. **Adjust settings** (model, temperature, etc.) from the settings panel.
+2. **Upload PDFs** via the PDF manager to provide document-based answers.
+3. **Process PDFs** to chunk and index them into ChromaDB.
+4. **Ask questions** in the message box — Claude will answer using only the document content.
+5. **Switch models** from the settings panel (Haiku for speed, Opus for depth).
+6. **Review past conversations** in the sidebar.
+7. **Rename or delete chats** as needed.
 
 ---
 
