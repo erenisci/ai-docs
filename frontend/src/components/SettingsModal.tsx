@@ -3,14 +3,18 @@ import { useEffect, useState } from 'react';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 interface Settings {
-  OPENAI_API_KEY: string;
+  ANTHROPIC_API_KEY: string;
   MODEL: string;
   SYSTEM_PROMPT: string;
 }
 
 interface SettingsModalProps {
   settings: Settings;
-  setSettings: (settings: { OPENAI_API_KEY: string; MODEL: string; SYSTEM_PROMPT: string }) => void;
+  setSettings: (settings: {
+    ANTHROPIC_API_KEY: string;
+    MODEL: string;
+    SYSTEM_PROMPT: string;
+  }) => void;
   setSettingsOpen: (open: boolean) => void;
   fetchSettings: () => Promise<void>;
 }
@@ -31,7 +35,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const updateSettings = async () => {
     try {
       const trimmedSettings = {
-        OPENAI_API_KEY: localSettings.OPENAI_API_KEY.replace(/^\s+|\s+$/g, ''),
+        ANTHROPIC_API_KEY: localSettings.ANTHROPIC_API_KEY.replace(/^\s+|\s+$/g, ''),
         MODEL: localSettings.MODEL.replace(/^\s+|\s+$/g, ''),
         SYSTEM_PROMPT: localSettings.SYSTEM_PROMPT.replace(/^\s+|\s+$/g, ''),
       };
@@ -57,13 +61,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       <div className='bg-stone-800 p-6 rounded-lg w-[30rem]'>
         <h2 className='text-xl font-medium mb-4'>Settings</h2>
         <label className='block mb-2 relative'>
-          API Key:
+          Anthropic API Key:
           <div className='flex items-center bg-stone-700 rounded mt-1 p-2'>
             <input
               type={showApiKey ? 'text' : 'password'}
               className='w-full bg-transparent outline-none'
-              value={localSettings.OPENAI_API_KEY}
-              onChange={e => setLocalSettings({ ...localSettings, OPENAI_API_KEY: e.target.value })}
+              value={localSettings.ANTHROPIC_API_KEY}
+              onChange={e =>
+                setLocalSettings({ ...localSettings, ANTHROPIC_API_KEY: e.target.value })
+              }
             />
             <button
               onClick={() => setShowApiKey(!showApiKey)}
@@ -80,8 +86,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             value={localSettings.MODEL}
             onChange={e => setLocalSettings({ ...localSettings, MODEL: e.target.value })}
           >
-            <option value='gpt-3.5-turbo'>GPT-3.5 Turbo</option>
-            <option value='gpt-4'>GPT-4</option>
+            <optgroup label='Claude Haiku'>
+              <option value='claude-haiku-4-5'>Claude Haiku 4.5</option>
+            </optgroup>
+            <optgroup label='Claude Sonnet'>
+              <option value='claude-sonnet-4-5'>Claude Sonnet 4.5</option>
+              <option value='claude-sonnet-4-6'>Claude Sonnet 4.6</option>
+            </optgroup>
+            <optgroup label='Claude Opus'>
+              <option value='claude-opus-4-5'>Claude Opus 4.5</option>
+              <option value='claude-opus-4-6'>Claude Opus 4.6</option>
+            </optgroup>
           </select>
         </label>
         <label className='block mb-2'>

@@ -17,8 +17,8 @@ const App: React.FC = () => {
   const [chats, setChats] = useState<{ chat_id: string; title: string }[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settings, setSettings] = useState({
-    OPENAI_API_KEY: '',
-    MODEL: 'gpt-3.5-turbo',
+    ANTHROPIC_API_KEY: '',
+    MODEL: 'claude-opus-4-6',
     SYSTEM_PROMPT: '',
   });
 

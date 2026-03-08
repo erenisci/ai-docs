@@ -42,10 +42,15 @@ const PDFModal: React.FC<PDFModalProps> = ({ setPdfModalOpen }) => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       alert('File uploaded successfully!');
+      setFile(null);
       fetchPDFs();
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      alert('Failed to upload file.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        alert(error.response.data.detail || 'This file already exists.');
+      } else {
+        console.error('Error uploading file:', error);
+        alert('Failed to upload file.');
+      }
     } finally {
       setUploading(false);
     }
