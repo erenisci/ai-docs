@@ -5,20 +5,52 @@ AI-Docs is an advanced AI-powered chatbot that uses **Retrieval-Augmented Genera
 ## Features
 
 - **ChatGPT-style conversation** with past chat recall.
-- **PDF Processing**: Extracts data from uploaded PDF files.
+- **PDF Processing**: Extracts and indexes data from uploaded PDF files.
 - **Real-time message storage**: Saves chat history using SQLite.
-- **RAG-based answering**: Uses an embedding model for accurate responses.
+- **RAG-based answering**: Uses ChromaDB and embedding models for accurate, document-grounded responses.
 - **Dynamic chat list**: Automatically updates the sidebar with active chats.
+- **Chat title editing**: Rename conversations directly from the sidebar.
 - **Delete chat support**: Deletes conversations dynamically.
+- **Configurable settings**: Adjust AI model, temperature, and other parameters at runtime.
 - **Dark UI theme** for a better user experience.
 - **Responsive Web Design**: Mobile-friendly and accessible from all screen sizes.
 - **Dockerized Deployment**: Easily run with Docker or Docker Compose.
 
 ## Tech Stack
 
-- **Frontend**: React (Vite), TypeScript, TailwindCSS
-- **Backend**: FastAPI, SQLite, ChromaDB
-- **AI Model**: OpenAI GPT-3.5 Turbo (can be configured)
+- **Frontend**: React 19 (Vite), TypeScript, TailwindCSS
+- **Backend**: FastAPI, SQLite, ChromaDB, LangChain
+- **AI Model**: OpenAI GPT (configurable via settings)
+
+---
+
+## Project Structure
+
+```
+ai-docs/
+├── backend/
+│   ├── src/
+│   │   ├── api.py            # FastAPI routes
+│   │   ├── chat_manager.py   # Chat history management
+│   │   ├── embedding.py      # ChromaDB embedding storage
+│   │   ├── file_manager.py   # PDF upload/delete operations
+│   │   ├── preprocessing.py  # PDF text extraction
+│   │   ├── retrieval.py      # LangChain RAG chain
+│   │   └── settings.py       # Runtime settings management
+│   ├── Dockerfile
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── components/       # React UI components
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── styles/           # Global styles
+│   │   └── App.tsx
+│   ├── Dockerfile
+│   └── package.json
+├── docker-compose.build.yml
+├── docker-compose.image.yml
+└── deploy.sh
+```
 
 ---
 
@@ -117,16 +149,19 @@ docker run -d -p 5173:3000 erenisci/ai-docs:frontend
 
 ## API Endpoints
 
-| Method   | Endpoint                      | Description                            |
-| -------- | ----------------------------- | -------------------------------------- |
-| `POST`   | `/ask/`                       | Sends a query to the chatbot.          |
-| `GET`    | `/get-chats/`                 | Retrieves all stored chat sessions.    |
-| `GET`    | `/get-chat-history/{chat_id}` | Fetches messages from a specific chat. |
-| `DELETE` | `/delete-chat/{chat_id}`      | Deletes a specific chat.               |
-| `GET`    | `/list-pdfs/`                 | Lists all stored PDFs.                 |
-| `POST`   | `/upload-pdf/`                | Uploads a PDF file for processing.     |
-| `POST`   | `/process-pdfs/`              | Processes all uploaded PDFs.           |
-| `DELETE` | `/delete-pdf/`                | Deletes a specific PDF file.           |
+| Method   | Endpoint                              | Description                              |
+| -------- | ------------------------------------- | ---------------------------------------- |
+| `POST`   | `/ask/`                               | Sends a query to the chatbot.            |
+| `GET`    | `/get-chats/`                         | Retrieves all stored chat sessions.      |
+| `GET`    | `/get-chat-history/{chat_id}`         | Fetches messages from a specific chat.   |
+| `POST`   | `/update-chat-title/{chat_id}/{title}`| Updates the title of a specific chat.   |
+| `DELETE` | `/delete-chat/{chat_id}`              | Deletes a specific chat.                 |
+| `GET`    | `/list-pdfs/`                         | Lists all stored PDFs.                   |
+| `POST`   | `/upload-pdf/`                        | Uploads a PDF file for processing.       |
+| `POST`   | `/process-pdfs/`                      | Processes all uploaded PDFs.             |
+| `DELETE` | `/delete-pdf/`                        | Deletes a specific PDF file.             |
+| `GET`    | `/get-settings/`                      | Returns the current AI settings.         |
+| `POST`   | `/update-settings/`                   | Updates AI model and runtime settings.   |
 
 ---
 
@@ -134,9 +169,11 @@ docker run -d -p 5173:3000 erenisci/ai-docs:frontend
 
 1. **Start a new chat** by clicking "New Chat".
 2. **Ask questions** in the message box.
-3. **Upload PDFs** to provide document-based answers.
-4. **Review past conversations** in the sidebar.
-5. **Delete chats** if necessary.
+3. **Upload PDFs** via the PDF manager to provide document-based answers.
+4. **Process PDFs** to index them into ChromaDB for RAG retrieval.
+5. **Review past conversations** in the sidebar.
+6. **Rename or delete chats** as needed.
+7. **Adjust settings** (model, temperature, etc.) from the settings panel.
 
 ---
 
