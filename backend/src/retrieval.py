@@ -1,17 +1,33 @@
 import os
 
+from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 from dotenv import load_dotenv
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_anthropic import ChatAnthropic
 from langchain_chroma import Chroma
+from langchain_core.embeddings import Embeddings
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from src.embedding import get_chroma_client
 from src.settings import settings
 
+
+class ChromaDefaultEmbeddings(Embeddings):
+    """LangChain wrapper for ChromaDB's DefaultEmbeddingFunction."""
+
+    def __init__(self):
+        self._ef = DefaultEmbeddingFunction()
+
+    def embed_documents(self, texts):
+        return self._ef(texts)
+
+    def embed_query(self, text):
+        return self._ef([text])[0]
+
+
 load_dotenv(override=True)
 
-current_api_key = os.getenv("OPENAI_API_KEY", "")
+current_api_key = os.getenv("ANTHROPIC_API_KEY", "")
 chain = None
 
 STATIC_PROMPT = (
@@ -27,10 +43,10 @@ def initialize_chain():
     """Initializes the AI model and retriever only if an API key is set."""
     global chain, current_api_key
 
-    api_key = os.getenv("OPENAI_API_KEY", "")
+    api_key = os.getenv("ANTHROPIC_API_KEY", "")
 
     if not api_key:
-        print("Warning: No OpenAI API Key set. Model initialization skipped.")
+        print("Warning: No Anthropic API Key set. Model initialization skipped.")
         chain = None
         return None
 
@@ -39,17 +55,12 @@ def initialize_chain():
 
     current_api_key = api_key
 
-    embedding_model = OpenAIEmbeddings(
-        model=settings["EMBEDDING_MODEL"],
-        openai_api_key=api_key
-    )
-
     client, _ = get_chroma_client()
 
     vector_db = Chroma(
         client=client,
         collection_name=settings["COLLECTION_NAME"],
-        embedding_function=embedding_model
+        embedding_function=ChromaDefaultEmbeddings(),
     )
 
     retriever = vector_db.as_retriever(
@@ -57,7 +68,7 @@ def initialize_chain():
         search_kwargs={"k": 20, "fetch_k": 100}
     )
 
-    llm = ChatOpenAI(
+    llm = ChatAnthropic(
         model=settings["MODEL"],
         api_key=api_key,
         temperature=0.3

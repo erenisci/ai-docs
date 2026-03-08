@@ -8,7 +8,6 @@ from chromadb.utils import embedding_functions
 from dotenv import load_dotenv
 from src.settings import settings
 
-
 load_dotenv(override=True)
 
 PROCESSED_DIR = settings["PDF_PROCESSED"]
@@ -28,26 +27,14 @@ def reset_chroma_db():
     return client
 
 
-def get_openai_embedding_function():
-    """Returns the OpenAI embedding function if API key exists, otherwise None."""
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-    if not OPENAI_API_KEY:
-        print("WARNING: No OpenAI API Key provided. Running without OpenAI embeddings.")
-        return None
-
-    return embedding_functions.OpenAIEmbeddingFunction(api_key=OPENAI_API_KEY, model_name=EMBEDDING_MODEL)
-
-
 def get_chroma_client():
     """Creates and returns ChromaDB client and collection."""
     os.makedirs(CHROMA_DB_DIR, exist_ok=True)
     client = chromadb.PersistentClient(path=CHROMA_DB_DIR)
-    openai_ef = get_openai_embedding_function()
 
     collection = client.get_or_create_collection(
         name=COLLECTION_NAME,
-        embedding_function=openai_ef
+        embedding_function=embedding_functions.DefaultEmbeddingFunction()
     )
 
     return client, collection

@@ -154,7 +154,7 @@ async def process_pdfs():
         store_embeddings_in_chromadb()
 
         global chain
-        _, _, chain = initialize_chain()
+        chain = initialize_chain()
 
         return {"message": "All PDFs processed and embeddings stored successfully."}
 
