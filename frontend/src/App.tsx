@@ -116,7 +116,10 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className='flex h-screen bg-stone-900 text-stone-200 font-roboto'>
+    <div
+      className='flex h-screen bg-[#0a0d14] text-[#e8eaf0]'
+      style={{ fontFamily: "'Inter', sans-serif" }}
+    >
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -131,26 +134,30 @@ const App: React.FC = () => {
         }`}
       >
         {/* Header */}
-        <div className='flex justify-between items-center bg-stone-800 p-4 text-stone-200'>
+        <div className='flex justify-between items-center bg-[#0f1320] border-b border-[#1e2840] px-5 py-3.5 text-[#e8eaf0]'>
           <button
             onClick={() => setSidebarOpen(e => !e)}
-            className='p-1.5 rounded-lg transition-all duration-200 hover:bg-stone-700'
+            className='p-2 rounded-lg transition-all duration-200 hover:bg-[#1c2236] text-[#8892a4] hover:text-[#e8eaf0]'
           >
-            {!sidebarOpen ? <FaBars size={18} /> : ' '}
+            {!sidebarOpen ? <FaBars size={16} /> : ' '}
           </button>
-          <h1 className='text-lg font-medium text-center flex-1 ml-14'>Chat</h1>
-          <div className='flex gap-6'>
+          <h1 className='text-sm font-medium text-[#e8eaf0] text-center flex-1 ml-14 truncate max-w-[50%]'>
+            {activeChat ? (chats.find(c => c.chat_id === activeChat)?.title ?? 'Chat') : 'New Chat'}
+          </h1>
+          <div className='flex gap-2'>
             <button
               onClick={() => setFileOpen(true)}
-              className='p-1.5 rounded-lg transition-all duration-200 hover:bg-stone-700'
+              className='p-2 rounded-lg transition-all duration-200 hover:bg-[#1c2236] text-[#8892a4] hover:text-[#818cf8]'
+              title='Manage PDFs'
             >
-              <FaRegFileAlt size={18} />
+              <FaRegFileAlt size={16} />
             </button>
             <button
               onClick={() => setSettingsOpen(true)}
-              className='p-1.5 rounded-lg transition-all duration-200 hover:bg-stone-700'
+              className='p-2 rounded-lg transition-all duration-200 hover:bg-[#1c2236] text-[#8892a4] hover:text-[#818cf8]'
+              title='Settings'
             >
-              <FiSettings size={18} />
+              <FiSettings size={16} />
             </button>
           </div>
         </div>

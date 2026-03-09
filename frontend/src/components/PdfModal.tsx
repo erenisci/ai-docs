@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { FiFile, FiRefreshCw, FiTrash, FiUploadCloud } from 'react-icons/fi';
+import { FiFile, FiRefreshCw, FiTrash, FiUploadCloud, FiX } from 'react-icons/fi';
 
 interface PDFModalProps {
   setPdfModalOpen: (open: boolean) => void;
@@ -83,31 +83,51 @@ const PDFModal: React.FC<PDFModalProps> = ({ setPdfModalOpen }) => {
   };
 
   return (
-    <div className='fixed inset-0 bg-stone-900 bg-opacity-50 flex justify-center items-center'>
-      <div className='bg-stone-800 p-6 rounded-lg w-[30rem] text-white relative'>
-        <h2 className='text-xl font-medium mb-4'>PDF Files</h2>
+    <div className='fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50'>
+      <div className='bg-[#0f1320] border border-[#1e2840] rounded-2xl p-6 w-[30rem] shadow-2xl shadow-black/50'>
+        {/* Modal Header */}
+        <div className='flex justify-between items-center mb-5'>
+          <h2 className='text-base font-semibold text-[#e8eaf0]'>PDF Files</h2>
+          <button
+            onClick={() => setPdfModalOpen(false)}
+            className='p-1.5 rounded-lg text-[#8892a4] hover:text-[#e8eaf0] hover:bg-[#1c2236] transition-all duration-200'
+          >
+            <FiX size={16} />
+          </button>
+        </div>
+
+        {/* PDF List */}
         {loading ? (
-          <p>Loading...</p>
+          <p className='text-[#505a70] text-sm'>Loading...</p>
         ) : pdfList.length === 0 ? (
-          <p>No PDFs yet.</p>
+          <div className='flex flex-col items-center justify-center py-8 gap-2'>
+            <FiFile
+              size={24}
+              className='text-[#2a3347]'
+            />
+            <p className='text-[#505a70] text-sm'>No PDFs yet</p>
+          </div>
         ) : (
-          <ul className='max-h-[15.1rem] overflow-y-auto flex flex-col gap-2'>
+          <ul className='max-h-[15rem] overflow-y-auto flex flex-col gap-1.5'>
             {pdfList.map((pdf, index) => (
               <li
                 key={index}
-                className='flex justify-between items-center bg-stone-700 p-2 rounded'
+                className='flex justify-between items-center bg-[#151929] border border-[#1e2840] px-3 py-2 rounded-xl'
               >
-                <span className='flex items-center gap-2'>
-                  <FiUploadCloud size={18} />
-                  {pdf.name.length > 39 ? pdf.name.slice(0, 39).trim() + '...' : pdf.name}
+                <span className='flex items-center gap-2 text-sm text-[#c8ccd8] truncate'>
+                  <FiUploadCloud
+                    size={15}
+                    className='text-[#6366f1] flex-shrink-0'
+                  />
+                  {pdf.name.length > 35 ? pdf.name.slice(0, 35).trim() + '...' : pdf.name}
                 </span>
-                <div className='flex gap-2'>
-                  <span>({pdf.size_mb} MB)</span>
+                <div className='flex items-center gap-2 ml-2 flex-shrink-0'>
+                  <span className='text-xs text-[#505a70]'>{pdf.size_mb} MB</span>
                   <button
                     onClick={() => deletePDF(pdf.name)}
-                    className='bg-red-500 hover:bg-red-400 p-1 rounded'
+                    className='p-1.5 rounded-lg text-[#505a70] hover:text-[#ef4444] hover:bg-[#2d1515] transition-colors duration-200'
                   >
-                    <FiTrash size={18} />
+                    <FiTrash size={14} />
                   </button>
                 </div>
               </li>
@@ -115,10 +135,13 @@ const PDFModal: React.FC<PDFModalProps> = ({ setPdfModalOpen }) => {
           </ul>
         )}
 
+        {/* Upload Section */}
         <div className='mt-4 flex gap-2'>
-          <label className='w-1/2 flex items-center gap-2 px-4 py-2 bg-stone-700 transition-all duration-200 rounded shadow-md tracking-wide cursor-pointer hover:bg-stone-600 justify-center'>
-            <FiFile size={18} />
-            <span className='text-sm'>Select PDF</span>
+          <label className='flex-1 flex items-center gap-2 px-3 py-2.5 bg-[#151929] border border-[#2a3347] hover:border-[#6366f1] transition-all duration-200 rounded-xl cursor-pointer justify-center text-sm text-[#8892a4] hover:text-[#e8eaf0]'>
+            <FiFile size={15} />
+            <span>
+              {file ? file.name.slice(0, 16) + (file.name.length > 16 ? '...' : '') : 'Select PDF'}
+            </span>
             <input
               type='file'
               accept='.pdf'
@@ -128,30 +151,25 @@ const PDFModal: React.FC<PDFModalProps> = ({ setPdfModalOpen }) => {
           </label>
           <button
             onClick={handleFileUpload}
-            className='w-1/2 bg-blue-500 hover:bg-blue-400 transition-all duration-200 p-2 rounded flex items-center justify-center gap-2'
-            disabled={uploading}
+            className='flex-1 bg-[#6366f1] hover:bg-[#4f52d8] transition-all duration-200 py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 text-sm text-white font-medium disabled:opacity-50 shadow-lg shadow-indigo-900/20'
+            disabled={uploading || !file}
           >
-            <FiUploadCloud size={18} />
+            <FiUploadCloud size={15} />
             {uploading ? 'Uploading...' : 'Upload'}
           </button>
         </div>
 
         <button
           onClick={handleProcessPDFs}
-          className='w-full bg-purple-500 hover:bg-purple-400 transition-all duration-200 mt-2 p-2 rounded flex items-center justify-center gap-2'
+          className='w-full bg-[#1e2040] hover:bg-[#252d5a] border border-[#6366f1]/30 hover:border-[#6366f1]/60 transition-all duration-200 mt-2 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm text-[#818cf8] font-medium disabled:opacity-50'
           disabled={processing}
         >
-          <FiRefreshCw size={18} /> {processing ? 'Synchronizing...' : 'Process PDFs'}
+          <FiRefreshCw
+            size={15}
+            className={processing ? 'animate-spin' : ''}
+          />
+          {processing ? 'Synchronizing...' : 'Process PDFs'}
         </button>
-
-        <div className='flex justify-end mt-4'>
-          <button
-            onClick={() => setPdfModalOpen(false)}
-            className='w-18 bg-red-500 hover:bg-red-400 transition-all duration-200 p-2 rounded'
-          >
-            Cancel
-          </button>
-        </div>
       </div>
     </div>
   );

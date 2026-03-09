@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiX } from 'react-icons/fi';
 
 interface Settings {
   ANTHROPIC_API_KEY: string;
@@ -56,16 +56,32 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     }
   };
 
+  const labelClass = 'block mb-1 text-xs font-medium text-[#8892a4] uppercase tracking-wider';
+  const inputClass =
+    'w-full bg-[#0a0d14] border border-[#2a3347] focus:border-[#6366f1] text-[#e8eaf0] rounded-xl px-3 py-2.5 text-sm outline-none transition-colors duration-200 placeholder-[#505a70]';
+
   return (
-    <div className='fixed inset-0 bg-stone-900 bg-opacity-50 flex justify-center items-center'>
-      <div className='bg-stone-800 p-6 rounded-lg w-[30rem]'>
-        <h2 className='text-xl font-medium mb-4'>Settings</h2>
-        <label className='block mb-2 relative'>
-          Anthropic API Key:
-          <div className='flex items-center bg-stone-700 rounded mt-1 p-2'>
+    <div className='fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50'>
+      <div className='bg-[#0f1320] border border-[#1e2840] rounded-2xl p-6 w-[30rem] shadow-2xl shadow-black/50'>
+        {/* Modal Header */}
+        <div className='flex justify-between items-center mb-5'>
+          <h2 className='text-base font-semibold text-[#e8eaf0]'>Settings</h2>
+          <button
+            onClick={() => setSettingsOpen(false)}
+            className='p-1.5 rounded-lg text-[#8892a4] hover:text-[#e8eaf0] hover:bg-[#1c2236] transition-all duration-200'
+          >
+            <FiX size={16} />
+          </button>
+        </div>
+
+        {/* API Key */}
+        <div className='mb-4'>
+          <label className={labelClass}>Anthropic API Key</label>
+          <div className='flex items-center bg-[#0a0d14] border border-[#2a3347] focus-within:border-[#6366f1] rounded-xl px-3 py-2.5 transition-colors duration-200'>
             <input
               type={showApiKey ? 'text' : 'password'}
-              className='w-full bg-transparent outline-none'
+              className='flex-1 bg-transparent outline-none text-sm text-[#e8eaf0] placeholder-[#505a70]'
+              placeholder='sk-ant-...'
               value={localSettings.ANTHROPIC_API_KEY}
               onChange={e =>
                 setLocalSettings({ ...localSettings, ANTHROPIC_API_KEY: e.target.value })
@@ -73,16 +89,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             />
             <button
               onClick={() => setShowApiKey(!showApiKey)}
-              className='ml-2 px-1 text-gray-400 hover:text-gray-200'
+              className='ml-2 text-[#505a70] hover:text-[#8892a4] transition-colors'
             >
-              {showApiKey ? <FiEyeOff /> : <FiEye />}
+              {showApiKey ? <FiEyeOff size={15} /> : <FiEye size={15} />}
             </button>
           </div>
-        </label>
-        <label className='block mb-2'>
-          Model:
+        </div>
+
+        {/* Model */}
+        <div className='mb-4'>
+          <label className={labelClass}>Model</label>
           <select
-            className='w-full p-2 bg-stone-700 rounded mt-1'
+            className={inputClass + ' cursor-pointer'}
             value={localSettings.MODEL}
             onChange={e => setLocalSettings({ ...localSettings, MODEL: e.target.value })}
           >
@@ -98,25 +116,30 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               <option value='claude-opus-4-6'>Claude Opus 4.6</option>
             </optgroup>
           </select>
-        </label>
-        <label className='block mb-2'>
-          System Prompt:
+        </div>
+
+        {/* System Prompt */}
+        <div className='mb-5'>
+          <label className={labelClass}>System Prompt</label>
           <textarea
-            className='w-full p-3 bg-stone-700 rounded mt-1 h-39 resize-none overflow-y-auto'
+            className={inputClass + ' h-32 resize-none overflow-y-auto'}
+            placeholder='You are a helpful assistant...'
             value={localSettings.SYSTEM_PROMPT}
             onChange={e => setLocalSettings({ ...localSettings, SYSTEM_PROMPT: e.target.value })}
           />
-        </label>
-        <div className='flex justify-end mt-4'>
+        </div>
+
+        {/* Actions */}
+        <div className='flex justify-end gap-2'>
           <button
             onClick={() => setSettingsOpen(false)}
-            className='mr-2 w-18 bg-red-500 hover:bg-red-400 transition-all duration-300 p-2 rounded'
+            className='px-4 py-2 rounded-xl text-sm text-[#8892a4] hover:text-[#e8eaf0] hover:bg-[#1c2236] transition-all duration-200'
           >
             Cancel
           </button>
           <button
             onClick={updateSettings}
-            className='w-18 bg-green-500 hover:bg-green-400 transition-all duration-300 p-2 rounded'
+            className='px-5 py-2 rounded-xl text-sm bg-[#6366f1] hover:bg-[#4f52d8] text-white font-medium transition-all duration-200 shadow-lg shadow-indigo-900/30'
           >
             Save
           </button>

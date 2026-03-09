@@ -1,32 +1,175 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 @import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
 
 @theme {
-  --font-roboto: 'Roboto', sans-serif;
-  --font-roboto-slab: 'Roboto Slab', serif;
+  --font-inter: 'Inter', sans-serif;
+
+  --color-surface-950: #0a0d14;
+  --color-surface-900: #0f1320;
+  --color-surface-800: #151929;
+  --color-surface-700: #1c2236;
+  --color-surface-600: #252d42;
+  --color-surface-500: #2e3850;
+
+  --color-border: #2a3347;
+  --color-border-subtle: #1e2840;
+
+  --color-text-primary: #e8eaf0;
+  --color-text-secondary: #8892a4;
+  --color-text-muted: #505a70;
+
+  --color-accent: #6366f1;
+  --color-accent-hover: #4f52d8;
+  --color-accent-light: #818cf8;
+  --color-accent-subtle: #1e2040;
+
+  --color-user-msg: #1e2040;
+  --color-ai-msg: #131828;
+
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
 }
 
-/* width */
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  transition: all 0.3s ease-in-out;
+  width: 6px;
 }
 
-/* Thumb */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.709 0.01 56.259);
+  background: oklch(0.35 0.04 260);
   border-radius: 9px;
-  transition: all 0.3s ease-in-out;
+  transition: background 0.2s ease;
 }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: oklch(0.709 0.01 56.259);
-  border-radius: 9px;
-}
-
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.556 0 0);
+  background: oklch(0.45 0.08 260);
+}
+
+/* AI message markdown styles */
+.ai-message p {
+  margin-bottom: 0.6em;
+}
+.ai-message p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-message strong {
+  color: #e8eaf0;
+  font-weight: 600;
+}
+.ai-message em {
+  color: #c8ccd8;
+  font-style: italic;
+}
+
+.ai-message h1,
+.ai-message h2,
+.ai-message h3 {
+  color: #e8eaf0;
+  font-weight: 600;
+  margin: 0.8em 0 0.4em;
+  line-height: 1.3;
+}
+.ai-message h1 {
+  font-size: 1.15em;
+}
+.ai-message h2 {
+  font-size: 1.05em;
+}
+.ai-message h3 {
+  font-size: 0.95em;
+}
+
+.ai-message ul,
+.ai-message ol {
+  padding-left: 1.4em;
+  margin: 0.4em 0;
+}
+.ai-message ul {
+  list-style-type: disc;
+}
+.ai-message ol {
+  list-style-type: decimal;
+}
+.ai-message li {
+  margin-bottom: 0.25em;
+  color: #c8ccd8;
+}
+
+.ai-message code {
+  background: #0a0d14;
+  color: #818cf8;
+  padding: 0.15em 0.45em;
+  border-radius: 6px;
+  font-size: 0.82em;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  border: 1px solid #2a3347;
+}
+
+.ai-message pre {
+  background: #0a0d14;
+  border: 1px solid #2a3347;
+  border-radius: 10px;
+  padding: 0.9em 1em;
+  overflow-x: auto;
+  margin: 0.6em 0;
+}
+.ai-message pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #c8ccd8;
+  font-size: 0.83em;
+}
+
+.ai-message blockquote {
+  border-left: 3px solid #6366f1;
+  padding-left: 0.8em;
+  margin: 0.5em 0;
+  color: #8892a4;
+  font-style: italic;
+}
+
+.ai-message a {
+  color: #818cf8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ai-message hr {
+  border: none;
+  border-top: 1px solid #2a3347;
+  margin: 0.8em 0;
+}
+
+.ai-message table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  font-size: 0.85em;
+}
+.ai-message th,
+.ai-message td {
+  border: 1px solid #2a3347;
+  padding: 0.4em 0.7em;
+  text-align: left;
+}
+.ai-message th {
+  background: #151929;
+  color: #e8eaf0;
+  font-weight: 600;
+}
+.ai-message td {
+  color: #c8ccd8;
 }

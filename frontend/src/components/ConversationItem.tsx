@@ -60,7 +60,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/update-chat-title/${chat_id}/${encodeURIComponent(newTitle)}`
+        `http://127.0.0.1:8000/update-chat-title/${chat_id}/${encodeURIComponent(newTitle)}`,
       );
       setIsEditing(false);
       refreshChats();
@@ -69,10 +69,14 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     }
   };
 
+  const isActive = activeChat === chat_id;
+
   return (
     <li
-      className={`flex justify-between items-center p-2 rounded cursor-pointer transition-all w-[28rem] md:max-w-[28rem] md:w-full ${
-        activeChat === chat_id ? 'bg-stone-700' : 'hover:bg-stone-700'
+      className={`group flex justify-between items-center px-3 py-2 rounded-lg cursor-pointer transition-all duration-150 w-full text-sm ${
+        isActive
+          ? 'bg-[#1e2040] text-[#e8eaf0]'
+          : 'text-[#8892a4] hover:bg-[#1c2236] hover:text-[#e8eaf0]'
       }`}
       onClick={() => !isEditing && onSelect(chat_id)}
     >
@@ -83,25 +87,27 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           onChange={e => setNewTitle(e.target.value)}
           onBlur={updateTitle}
           onKeyDown={e => e.key === 'Enter' && updateTitle()}
-          className='bg-transparent border-b border-stone-500 focus:outline-none w-full'
+          className='bg-transparent border-b border-[#6366f1] focus:outline-none w-full text-[#e8eaf0] text-sm'
           autoFocus
         />
       ) : (
         <span
-          className='cursor-pointer flex-grow'
+          className='cursor-pointer flex-grow truncate'
           onDoubleClick={() => setIsEditing(true)}
         >
           {displayTitle}
         </span>
       )}
 
-      <div className='flex'>
+      <div
+        className={`flex gap-0.5 ml-1 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity duration-150`}
+      >
         {isEditing ? (
           <button
             onClick={updateTitle}
-            className='p-1 mr-1 text-green-500 hover:text-green-400'
+            className='p-1 rounded text-[#10b981] hover:bg-[#0d2a1f] transition-colors'
           >
-            <FiSave size={18} />
+            <FiSave size={14} />
           </button>
         ) : (
           <button
@@ -109,17 +115,17 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
               e.stopPropagation();
               setIsEditing(true);
             }}
-            className='p-1 mr-1 text-stone-400 hover:text-stone-300'
+            className='p-1 rounded text-[#505a70] hover:text-[#8892a4] hover:bg-[#252d42] transition-colors'
           >
-            <FiEdit size={18} />
+            <FiEdit size={14} />
           </button>
         )}
 
         <button
           onClick={deleteChat}
-          className='p-1 text-red-500 hover:text-red-400'
+          className='p-1 rounded text-[#505a70] hover:text-[#ef4444] hover:bg-[#2d1515] transition-colors'
         >
-          <FiTrash size={18} />
+          <FiTrash size={14} />
         </button>
       </div>
     </li>
