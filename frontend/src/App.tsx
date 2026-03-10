@@ -8,8 +8,14 @@ import InputField from './components/InputField';
 import PDFModal from './components/PdfModal';
 import SettingsModal from './components/SettingsModal';
 import Sidebar from './components/Sidebar';
+import SplashScreen from './components/SplashScreen';
 
 const App: React.FC = () => {
+  const [showSplash, setShowSplash] = useState(() => {
+    if (sessionStorage.getItem('splashShown')) return false;
+    sessionStorage.setItem('splashShown', 'true');
+    return true;
+  });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [FileOpen, setFileOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<string | null>(null);
@@ -120,6 +126,7 @@ const App: React.FC = () => {
       className='flex h-screen bg-[#0a0d14] text-[#e8eaf0]'
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
+      {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
